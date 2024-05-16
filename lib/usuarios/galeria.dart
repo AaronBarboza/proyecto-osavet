@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'dart:io';
+import 'dart:io' show Directory, File, Platform;
 
 class GalleryPage extends StatefulWidget {
-  const GalleryPage({Key? key}) : super(key: key);
+  const GalleryPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _GalleryPageState createState() => _GalleryPageState();
 }
 
@@ -27,49 +27,75 @@ class _GalleryPageState extends State<GalleryPage> {
 // Lista para almacenar rutas de imágenes locales
 
   @override
-  void initState() {
-    super.initState();
-    _loadLocalImages();
-  }
-
-  Future<void> _loadLocalImages() async {
-    // Suponiendo que tus imágenes están en la carpeta 'assets/images'
-    final directory = Directory('assets/images');
-    final files = directory.listSync().whereType<File>().toList();
-
-    for (final file in files) {
-      setState(() {
-        _imagePaths.add(file.path); // Agrega la ruta de cada imagen a la lista
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    const linearGradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        Color(0xFF72EDF2),
+        Color(0xFF5151E5),
+      ],
+    );
+
     return Scaffold(
-      appBar: AppBar(),
-      body: SingleChildScrollView(
-        child: CarouselSlider(
-          options: CarouselOptions(
-            height: 400, // Altura del slider
-            autoPlay: true,
-            aspectRatio: 2.0,
-            enlargeCenterPage: true,
-          ),
-          items: _imagePaths
-              .map((item) => Container(
-                    child: Center(
-                      child: CachedNetworkImage(
-                        imageUrl: item,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) =>
-                            const CircularProgressIndicator(),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF72EDF2),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: linearGradient,
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 16),
+            const Text(
+              'Galería de Fotos',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            CarouselSlider(
+              options: CarouselOptions(
+                height: 400,
+                autoPlay: true,
+                aspectRatio: 2.0,
+                enlargeCenterPage: true,
+              ),
+              items: _imagePaths
+                  .map(
+                    (item) => Container(
+                      child: Center(
+                        child: CachedNetworkImage(
+                          imageUrl: item,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) =>
+                              const CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                        ),
                       ),
                     ),
-                  ))
-              .toList(),
+                  )
+                  .toList(),
+            ),
+            const SizedBox(height: 16),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Estas son fotos recuperadas de nuestra página de Facebook. ¡Disfruta de nuestra galería!',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
         ),
       ),
     );

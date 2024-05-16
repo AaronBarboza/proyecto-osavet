@@ -124,7 +124,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                                                 Text(
                                                   data['titulo'],
                                                   style: const TextStyle(
-                                                    fontSize: 22.0,
+                                                    fontSize: 24.0,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                   textAlign: TextAlign.center,
@@ -135,7 +135,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                                                 Text(
                                                   data['descripcion'],
                                                   style: const TextStyle(
-                                                      fontSize: 14.0),
+                                                      fontSize: 20.0),
                                                   textAlign: TextAlign.center,
                                                 ),
                                                 const SizedBox(
@@ -144,7 +144,13 @@ class _NoticiasPageState extends State<NoticiasPage> {
                                                 Text(
                                                   data['fecha'],
                                                   style: const TextStyle(
-                                                      fontSize: 14.0),
+                                                      fontSize: 20.0),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                Text(
+                                                  data['hora'],
+                                                  style: const TextStyle(
+                                                      fontSize: 20.0),
                                                   textAlign: TextAlign.center,
                                                 ),
                                               ],

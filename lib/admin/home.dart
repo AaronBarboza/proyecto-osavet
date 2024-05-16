@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_osavet_1/admin/addEvento.dart';
+import 'package:flutter_osavet_1/admin/addnoticia.dart';
+import 'package:flutter_osavet_1/usuarios/principalpage.dart';
 import 'appointment.dart';
 import 'medical_history.dart';
 import 'billing.dart';
 import 'internal_communication.dart';
 import 'pet_profile.dart';
-import 'vaccination_calendar.dart';
+import 'calendar.dart';
 import '../login.dart';
-
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -15,7 +17,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Menu OSAVET"),
+        title: const Text("---OSAVET---"),
+        backgroundColor: const Color(0xFFbdc3c7),
       ),
       drawer: Drawer(
         child: ListView(
@@ -94,6 +97,26 @@ class HomeScreen extends StatelessWidget {
                 );
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.add),
+              title: const Text('Agregar Noticia'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AddNoticia()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.add),
+              title: const Text('Agregar Evento'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AddEvento()),
+                );
+              },
+            ),
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout),
@@ -101,7 +124,8 @@ class HomeScreen extends StatelessWidget {
               onTap: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const PrincipalPage()),
                 );
               },
             ),

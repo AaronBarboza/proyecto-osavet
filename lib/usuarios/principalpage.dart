@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_osavet_1/usuarios/informacioncitas.dart';
 import '../login.dart';
 import '../usuarios/informacion.dart';
 import '../usuarios/contact.dart';
@@ -134,7 +135,12 @@ class _PrincipalPageState extends State<PrincipalPage>
                 title:
                     const Text('Citas', style: TextStyle(color: Colors.black)),
                 onTap: () {
-                  // Lógica para la opción "Citas"
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const InformacionCitas(),
+                    ),
+                  );
                 },
               ),
               ListTile(

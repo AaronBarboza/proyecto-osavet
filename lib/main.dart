@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Importa el paquete firebase_auth
+import 'package:flutter_osavet_1/admin/home.dart';
 import 'usuarios/principalpage.dart';
 
 Future<void> main() async {
@@ -66,7 +67,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const PrincipalPage(),
+      home: const HomeScreen(),//PrincipalPage(),
     );
   }
 }
