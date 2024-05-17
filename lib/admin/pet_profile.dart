@@ -12,6 +12,10 @@ class Pet {
   final String ownerName;
   final String ownerPhone;
   final String photoUrl;
+  final String medicalConditions;
+  final String allergies;
+  final String currentMedications;
+  final String vaccinations;
 
   Pet({
     required this.name,
@@ -20,6 +24,10 @@ class Pet {
     required this.ownerName,
     required this.ownerPhone,
     required this.photoUrl,
+    required this.medicalConditions,
+    required this.allergies,
+    required this.currentMedications,
+    required this.vaccinations,
   });
 
   Map<String, dynamic> toJson() {
@@ -30,6 +38,10 @@ class Pet {
       'ownerName': ownerName,
       'ownerPhone': ownerPhone,
       'photoUrl': photoUrl,
+      'medicalConditions': medicalConditions,
+      'allergies': allergies,
+      'currentMedications': currentMedications,
+      'vaccinations': vaccinations,
     };
   }
 }
@@ -49,6 +61,10 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _ownerNameController = TextEditingController();
   final TextEditingController _ownerPhoneController = TextEditingController();
+  final TextEditingController _medicalConditionsController = TextEditingController();
+  final TextEditingController _allergiesController = TextEditingController();
+  final TextEditingController _currentMedicationsController = TextEditingController();
+  final TextEditingController _vaccinationsController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +88,10 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                       ownerName: data['ownerName'],
                       ownerPhone: data['ownerPhone'],
                       photoUrl: data['photoUrl'],
+                      medicalConditions: data['medicalConditions'] ?? '',
+                      allergies: data['allergies'] ?? '',
+                      currentMedications: data['currentMedications'] ?? '',
+                      vaccinations: data['vaccinations'] ?? '',
                     );
                   }).toList();
 
@@ -89,7 +109,13 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                               ),
                         title: Text(pet.name),
                         subtitle: Text('${pet.type}, ${pet.age} años'),
-                        trailing: Text('${pet.ownerName}, ${pet.ownerPhone}'),
+                        trailing: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text('${pet.ownerName}'),
+                            Text('${pet.ownerPhone}'),
+                          ],
+                        ),
                       );
                     },
                   );
@@ -121,8 +147,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
               children: [
                 GestureDetector(
                   onTap: () async {
-                    final pickedImage =
-                        await _imagePicker.pickImage(source: ImageSource.gallery);
+                    final pickedImage = await _imagePicker.pickImage(source: ImageSource.gallery);
                     if (pickedImage != null) {
                       setState(() {
                         _selectedImage = File(pickedImage.path);
@@ -176,6 +201,30 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                     labelText: 'Teléfono del Dueño',
                   ),
                 ),
+                TextField(
+                  controller: _medicalConditionsController,
+                  decoration: const InputDecoration(
+                    labelText: 'Condiciones Médicas',
+                  ),
+                ),
+                TextField(
+                  controller: _allergiesController,
+                  decoration: const InputDecoration(
+                    labelText: 'Alergias',
+                  ),
+                ),
+                TextField(
+                  controller: _currentMedicationsController,
+                  decoration: const InputDecoration(
+                    labelText: 'Medicamentos Actuales',
+                  ),
+                ),
+                TextField(
+                  controller: _vaccinationsController,
+                  decoration: const InputDecoration(
+                    labelText: 'Vacunas',
+                  ),
+                ),
               ],
             ),
           ),
@@ -215,6 +264,10 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
       ownerName: _ownerNameController.text,
       ownerPhone: _ownerPhoneController.text,
       photoUrl: photoUrl ?? '',
+      medicalConditions: _medicalConditionsController.text,
+      allergies: _allergiesController.text,
+      currentMedications: _currentMedicationsController.text,
+      vaccinations: _vaccinationsController.text,
     );
 
     try {
@@ -232,6 +285,10 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
     _ageController.clear();
     _ownerNameController.clear();
     _ownerPhoneController.clear();
+    _medicalConditionsController.clear();
+    _allergiesController.clear();
+    _currentMedicationsController.clear();
+    _vaccinationsController.clear();
     setState(() {
       _selectedImage = null;
     });
