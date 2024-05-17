@@ -1,0 +1,59 @@
+name: flutter_osavet_1
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  font_awesome_flutter: ^10.4.0
+  firebase_core: ^2.30.1
+  cloud_firestore: ^4.17.2
+  firebase_auth: ^4.19.4
+  url_launcher: ^6.1.10
+  firebase_storage: ^11.0.14
+  cached_network_image: ^3.2.3
+  http: ^0.13.5
+  carousel_slider: ^4.2.1
+  table_calendar: ^3.0.9
+  image_picker: ^1.1.1
+  html: ^0.15.4
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/logo.png
+    - assets/perro.png
+    - assets/veterinaria.png
+    - assets/veterinarios.png
+    - assets/vetecora.png
+    - assets/noticias.png
+    - assets/noticias2.png
+    - assets/citas.png
+    - assets/citas2.png
+    - assets/recurso1.png
+    - assets/recurso2.png
+    - assets/recurso3.png
+    - assets/recurso4.png
+    - assets/recurso5.png
+    - assets/galeria1.png
+    - assets/galeria2.png
+    - assets/galeria3.png
+    - assets/galeria4.png
+    - assets/galeria5.png
+    - assets/galeria6.png
+    - assets/galeria7.png
+    - assets/galeria8.png
+    - assets/galeria9.png
+    - assets/galeria10.png
