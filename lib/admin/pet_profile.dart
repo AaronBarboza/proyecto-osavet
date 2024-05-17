@@ -142,7 +142,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                 _showAddPetDialog(context);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromRGBO(4, 65, 80, 0.835),
+                backgroundColor: Color.fromRGBO(154, 180, 187, 0.831),
                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 textStyle: const TextStyle(fontSize: 18),
                 shape: RoundedRectangleBorder(
