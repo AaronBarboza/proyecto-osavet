@@ -15,7 +15,7 @@ class Pet {
   final String allergies;
   final String currentMedications;
   final String vaccinations;
-  final String id; // Add an ID field
+  final String id;
 
   Pet({
     required this.name,
@@ -28,7 +28,7 @@ class Pet {
     required this.allergies,
     required this.currentMedications,
     required this.vaccinations,
-    required this.id, // Add an ID field
+    required this.id,
   });
 
   Map<String, dynamic> toJson() {
@@ -135,11 +135,22 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
               },
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              _showAddPetDialog(context);
-            },
-            child: const Text('Agregar Mascota'),
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: ElevatedButton(
+              onPressed: () {
+                _showAddPetDialog(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromRGBO(4, 65, 80, 0.835),
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                textStyle: const TextStyle(fontSize: 18),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: const Text('Agregar Mascota'),
+            ),
           ),
         ],
       ),
@@ -197,6 +208,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
   }
 
   Future<void> _showAddPetDialog(BuildContext context) async {
+    _clearControllers(); // Clear the controllers before showing the add dialog
     await showDialog(
       context: context,
       builder: (context) {
@@ -309,6 +321,8 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
   }
 
   Future<void> _showEditPetDialog(BuildContext context, Pet pet) async {
+    _clearControllers(); // Clear the controllers before filling them with existing data
+
     // Fill the controllers with the existing data
     _nameController.text = pet.name;
     _typeController.text = pet.type;
@@ -461,6 +475,11 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
 
     try {
       await FirebaseFirestore.instance.collection('pets').add(pet.toJson());
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Mascota agregada con éxito'),
+        ),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -479,6 +498,8 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
       final uploadTask = storageRef.putFile(_selectedImage!);
       await uploadTask.whenComplete(() => null);
       photoUrl = await storageRef.getDownloadURL();
+    } else {
+      photoUrl = (await FirebaseFirestore.instance.collection('pets').doc(id).get()).data()?['photoUrl'];
     }
 
     final pet = Pet(
@@ -497,6 +518,12 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
 
     try {
       await FirebaseFirestore.instance.collection('pets').doc(id).update(pet.toJson());
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Mascota actualizada con éxito'),
+        ),
+      );
+      setState(() {}); // Update the UI to reflect changes
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -511,6 +538,12 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
   Future<void> _deletePet(String id) async {
     try {
       await FirebaseFirestore.instance.collection('pets').doc(id).delete();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Mascota eliminada con éxito'),
+        ),
+      );
+      setState(() {}); // Update the UI to reflect changes
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
