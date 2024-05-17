@@ -1,0 +1,1 @@
+ C:\\Users\\barbo\\Documents\\UNA\\Plataformas\ Moviles\\Proyecto-OSAVET\\.dart_tool\\flutter_build\\bab167d0aae746084c4870c6807ec862\\native_assets.yaml: 
