@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+
+import 'models.dart';
 
 class VaccinationCalendarScreen extends StatefulWidget {
   const VaccinationCalendarScreen({super.key});
@@ -13,7 +17,27 @@ class _VaccinationCalendarScreenState extends State<VaccinationCalendarScreen> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  Map<DateTime, List<String>> _events = {};
+  Map<DateTime, List<Cita>> _citas = {};
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCitas();
+  }
+
+  Future<void> _getCitas() async {
+    final citasSnapshot = await _firestore.collection('citas').get();
+    final citas =
+        citasSnapshot.docs.map((doc) => Cita.fromJson(doc.data())).toList();
+    setState(() {
+      _citas = {
+        for (var cita in citas)
+          DateTime.parse(cita.fecha.toIso8601String()): [cita]
+      };
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +46,7 @@ class _VaccinationCalendarScreenState extends State<VaccinationCalendarScreen> {
         title: const Text('Calendario de vacunación'),
       ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -40,14 +64,15 @@ class _VaccinationCalendarScreenState extends State<VaccinationCalendarScreen> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
               ),
-              margin: EdgeInsets.all(16),
-              padding: EdgeInsets.all(16),
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: TableCalendar(
                 firstDay: DateTime.utc(2023, 1, 1),
                 lastDay: DateTime.utc(2025, 12, 31),
                 focusedDay: _focusedDay,
-                calendarFormat: _calendarFormat,
                 locale: 'es_ES', // Cambiar al idioma español
+
+                calendarFormat: _calendarFormat,
                 selectedDayPredicate: (day) {
                   return isSameDay(_selectedDay, day);
                 },
@@ -56,7 +81,7 @@ class _VaccinationCalendarScreenState extends State<VaccinationCalendarScreen> {
                     _selectedDay = selectedDay;
                     _focusedDay = focusedDay;
                   });
-                  _showNoteDialog(context, selectedDay);
+                  _showCitaDialog(context, selectedDay);
                 },
                 onFormatChanged: (format) {
                   setState(() {
@@ -85,6 +110,7 @@ class _VaccinationCalendarScreenState extends State<VaccinationCalendarScreen> {
                     color: Colors.white,
                   ),
                 ),
+                eventLoader: _getEventsList,
               ),
             ),
             const SizedBox(height: 16.0),
@@ -96,33 +122,213 @@ class _VaccinationCalendarScreenState extends State<VaccinationCalendarScreen> {
                   fontSize: 18,
                 ),
               ),
-            ..._getEventsList(_selectedDay),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _citas[_selectedDay]?.length ?? 0,
+                itemBuilder: (context, index) {
+                  final cita = _citas[_selectedDay]![index];
+                  return ListTile(
+                    title: Text(cita.descripcion),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () => _editCita(cita),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () => _deleteCita(cita.id),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  List<Widget> _getEventsList(DateTime? day) {
-    if (day == null) return [];
-    final events = _events[day] ?? [];
-    return events
-        .map((event) => Text(event, style: TextStyle(color: Colors.white)))
+  List<dynamic>? _getEventsList(DateTime day) {
+    return _citas[day]
+        ?.map(
+          (cita) => {
+            'date': cita.fecha,
+            'title': cita.descripcion,
+            'mascotaId': cita.mascotaId,
+          },
+        )
         .toList();
   }
 
-  void _showNoteDialog(BuildContext context, DateTime day) {
-    showDialog(
+  Future<void> _showCitaDialog(BuildContext context, DateTime day) async {
+    String descripcion = '';
+    TimeOfDay? hora;
+    Mascota? mascota;
+
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
-        String noteText = '';
+        return StreamBuilder<QuerySnapshot>(
+          stream: _firestore.collection('pets').snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const AlertDialog(
+                title: Text('Cargando...'),
+              );
+            }
+
+            final mascotas = snapshot.data!.docs
+                .map(
+                  (doc) => Mascota.fromJson(doc.data() as Map<String, dynamic>),
+                )
+                .toList();
+
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  title: const Text('Agregar Cita'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        onChanged: (text) => descripcion = text,
+                        decoration: const InputDecoration(
+                          hintText: 'Ingresa la descripción de la cita',
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+                      ListTile(
+                        title: const Text('Fecha'),
+                        trailing: Text(
+                          '${day.day}/${day.month}/${day.year}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      ListTile(
+                        title: const Text('Hora'),
+                        trailing: Text(
+                          hora != null
+                              ? '${hora?.format(context)}'
+                              : 'Seleccionar hora',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        onTap: () async {
+                          final selectedHora = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
+                          if (selectedHora != null) {
+                            setState(() {
+                              hora = selectedHora;
+                            });
+                          }
+                        },
+                      ),
+                      ListTile(
+                        title: const Text('Mascota'),
+                        trailing: Text(
+                          (mascota?.name) ?? 'Seleccionar mascota',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        onTap: () async {
+                          final selectedMascota = await showDialog<Mascota>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Seleccionar Mascota'),
+                                content: SizedBox(
+                                  width: double.maxFinite,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: mascotas.length,
+                                    itemBuilder: (context, index) {
+                                      final mascotaObj = mascotas[index];
+                                      return ListTile(
+                                        title: Text(mascotaObj.name),
+                                        onTap: () {
+                                          Navigator.pop(context, mascotaObj);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                          if (selectedMascota != null) {
+                            setState(() {
+                              mascota = selectedMascota;
+                            });
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancelar'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        if (descripcion.isNotEmpty &&
+                            hora != null &&
+                            mascota != null) {
+                          _addCita(day, descripcion, hora!, mascota!);
+                        }
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Agregar'),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _addCita(DateTime fecha, String descripcion, TimeOfDay hora,
+      Mascota mascota) async {
+    final cita = Cita(
+      id: _firestore.collection('citas').doc().id,
+      fecha:
+          DateTime(fecha.year, fecha.month, fecha.day, hora.hour, hora.minute),
+      descripcion: descripcion,
+      mascotaId: mascota.id,
+    );
+    await _firestore.collection('citas').doc(cita.id).set(cita.toJson());
+    setState(() {
+      _citas[fecha] = [..._citas[fecha] ?? [], cita];
+    });
+  }
+
+  Future<void> _deleteCita(String id) async {
+    await _firestore.collection('citas').doc(id).delete();
+    setState(() {
+      _citas.removeWhere((key, value) => value.any((cita) => cita.id == id));
+    });
+  }
+
+  Future<void> _editCita(Cita cita) async {
+    String descripcion = cita.descripcion;
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Agregar nota'),
+          title: const Text('Editar Cita'),
           content: TextField(
-            onChanged: (text) => noteText = text,
+            onChanged: (text) => descripcion = text,
             decoration: const InputDecoration(
-              hintText: 'Ingresa tu nota aquí',
+              hintText: 'Ingresa la nueva descripción de la cita',
             ),
+            controller: TextEditingController(text: cita.descripcion),
           ),
           actions: [
             TextButton(
@@ -131,17 +337,30 @@ class _VaccinationCalendarScreenState extends State<VaccinationCalendarScreen> {
             ),
             TextButton(
               onPressed: () {
-                if (noteText.isNotEmpty) {
-                  _events[day] = [..._events[day] ?? [], noteText];
-                  setState(() {});
+                if (descripcion.isNotEmpty) {
+                  _updateCita(cita.id, cita.fecha, descripcion);
                 }
                 Navigator.pop(context);
               },
-              child: const Text('Agregar'),
+              child: const Text('Guardar'),
             ),
           ],
         );
       },
     );
+  }
+
+  Future<void> _updateCita(
+      String id, DateTime fecha, String descripcion) async {
+    final cita = Cita(
+      id: id,
+      fecha: fecha,
+      descripcion: descripcion,
+      mascotaId: _citas[fecha]!.firstWhere((c) => c.id == id).mascotaId,
+    );
+    await _firestore.collection('citas').doc(id).update(cita.toJson());
+    setState(() {
+      _citas[fecha] = [..._citas[fecha]!.where((c) => c.id != id), cita];
+    });
   }
 }
