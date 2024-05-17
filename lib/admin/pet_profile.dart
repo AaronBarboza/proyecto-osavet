@@ -178,7 +178,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                 TextField(
                   controller: _typeController,
                   decoration: const InputDecoration(
-                    labelText: 'Tipo',
+                    labelText: 'Raza',
                   ),
                 ),
                 TextField(
