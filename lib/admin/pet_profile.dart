@@ -111,97 +111,93 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
   }
 
   Future<void> _showAddPetDialog(BuildContext context) async {
-  await showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('Agregar Mascota'),
-        content: SingleChildScrollView(
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: () async {
-                  final pickedImage =
-                      await _imagePicker.pickImage(source: ImageSource.gallery);
-                  if (pickedImage != null) {
-                    setState(() {
-                      _selectedImage = File(pickedImage.path);
-                    });
-                  }
-                },
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.grey[300],
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Agregar Mascota'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    final pickedImage =
+                        await _imagePicker.pickImage(source: ImageSource.gallery);
+                    if (pickedImage != null) {
+                      setState(() {
+                        _selectedImage = File(pickedImage.path);
+                      });
+                    }
+                  },
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.grey[300],
+                    ),
+                    child: _selectedImage != null
+                        ? Image.file(
+                            _selectedImage!,
+                            fit: BoxFit.cover,
+                          )
+                        : const Icon(Icons.camera_alt),
                   ),
-                  child: _selectedImage != null
-                      ? Image.file(
-                          _selectedImage!,
-                          fit: BoxFit.cover,
-                        )
-                      : const Icon(Icons.camera_alt),
                 ),
-              ),
-              TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nombre',
+                TextField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nombre',
+                  ),
                 ),
-              ),
-              TextField(
-                controller: _typeController,
-                decoration: const InputDecoration(
-                  labelText: 'Tipo',
+                TextField(
+                  controller: _typeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Tipo',
+                  ),
                 ),
-              ),
-              TextField(
-                controller: _ageController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Edad',
+                TextField(
+                  controller: _ageController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Edad',
+                  ),
                 ),
-              ),
-              TextField(
-                controller: _ownerNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nombre del Dueño',
+                TextField(
+                  controller: _ownerNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nombre del Dueño',
+                  ),
                 ),
-              ),
-              TextField(
-                controller: _ownerPhoneController,
-                keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  labelText: 'Teléfono del Dueño',
+                TextField(
+                  controller: _ownerPhoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    labelText: 'Teléfono del Dueño',
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _addPet(context);
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              disabledBackgroundColor: Colors.green, // Cambia el color de fondo del botón
-              backgroundColor: Colors.white, // Cambia el color del texto del botón
+              ],
             ),
-            child: const Text('Agregar'),
           ),
-        ],
-      );
-    },
-  );
-}
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                _addPet(context);
+                Navigator.pop(context);
+              },
+              child: const Text('Agregar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Future<void> _addPet(BuildContext context) async {
     String? photoUrl;
