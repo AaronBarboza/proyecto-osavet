@@ -1,2 +1,0 @@
-# proyecto-osavet
- Plataformas Moviles

@@ -1,1 +1,0 @@
- C:\\Users\\barbo\\Documents\\UNA\\Plataformas\ Moviles\\produtos_firebase\\Flutter_listarProductos_Pamela_Allison__Aaron_Gabriela\\.dart_tool\\flutter_build\\b328a66c6a6ac09a24c013bf3b004001\\native_assets.yaml: 
