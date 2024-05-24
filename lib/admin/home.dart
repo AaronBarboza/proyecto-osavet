@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Veterinaria OSAVET"),
-        backgroundColor: Color.fromRGBO(75, 224, 255, 1),
+        backgroundColor: Color(0xFF6c575f),
       ),
       drawer: Drawer(
         child: ListView(
@@ -28,9 +28,9 @@ class HomeScreen extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF4be0ff),
-                    Color(0xFF9bfff8),
-                    Color(0xFF9bfff8),
+                    Color(0xFF6c575f),
+                    Color(0xFF896c70),
+                    Color(0xFF918784),
                     
                   ],
                 ),
@@ -135,9 +135,9 @@ class HomeScreen extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFFa9dcff),
-              Color(0xFFe4f6ff),
-              Color(0xFFffffff),
+              Color(0xFF6c575f),
+              Color(0xFF896c70),
+              Color(0xFF918784),
             ],
           ),
         ),
